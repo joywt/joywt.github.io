@@ -1,7 +1,153 @@
 ---
 layout: post
-title: "my blog"
+title: "内存管理和ARC"
 date: 2014-08-27 20:32:08 +0800
 comments: true
 categories: 
 ---
+
+*注释：本文内容大多来自《Objective-C高级编程 iOS和OS X多线程和内存管理》这本书*
+
+### 内存管理
+
+#### 内存管理的思考方式
+* 自己生成的对象，自己持有
+* 非自己生成的对象，自己也能持有
+* 不再需要自己持有的对象时释放
+* 非自己持有的对象无法释放
+
+对象操作与Objective-C 方法的对应表：
+
+对象操作			| Objective-C 方法
+:--------------	| :--------------
+生成并持有对象	| alloc/new/copy/mutableCopy 等方法
+持有对象			| retain 方法
+释放对象			| release 方法
+废弃对象			| dealloc 方法
+
+具体方法的事例和实现不在这里陈述，感兴趣的可以购买图书翻看。解释一下“非自己生成的对象，自己也能持有”，华丽的语言比不过代码两行（非ARC）：
+
+    /**
+     *  取得非自己生成并持有的对象。对象存在，但自己不持有
+     */
+    id obj = [NSMutableArray array];
+    /**
+     *  自己持有对象
+     */
+    [obj retain];
+    
+### ARC
+
+#### 所有权修饰符
+ARC有效时，id类型和对象类型必须附加所有权修饰符。所有权修饰符一共有4种。
+
+* __strong 修饰符
+* __weak 修饰符
+* __unsafe_unretained 修饰符
+* __autoreleasing 修饰符
+
+##### 1. __strong 修饰符
+id 和对象类型在没有明确指定所有权修饰符时，默认为 __strong 修饰符，下面两行代码相同：
+
+	id obj = [[NSObject alloc]init];
+	id __strong obj = [[NSObject alloc]init];
+对象类型包括自己生成的对象和非自己生成的对象，比如：
+
+	id __strong obj = [NSMutableArray array];
+苹果宣称：通过 __strong 修饰符，不必再次键入 retain 或者 release,完美地满足了“内存管理的思考方式”，通过下面的代码来展示：
+
+	id __strong obj0 = [[NSObject alloc] init];/*** obj0 持有对象A的强引用 ***/
+    id obj1 = [[NSObject alloc] init];/*** obj1 持有对象B的强引用 ***/
+    id obj2 = nil;
+    
+    obj1 = obj0;
+    /**
+     *  obj1 持有 obj0 赋值的对象B的强引用
+     *  因为obj1 被赋值，所以原来持有对象B的强引用失效。
+     *  对象B的所有者不存在，因此废弃对象B、
+     *
+     *  此时，对象A的强引用变量为 obj1 和 obj0
+     */
+    obj2 = obj1;
+    /**
+     *
+     *
+     *  此时 对象A的强引用变量为 obj0 ，obj1 ，obj2
+     *
+     *
+     */
+    obj1 = nil; /** obj1对A的强引用失效 **/
+    obj2 = nil; /** obj2对A的强引用失效 **/
+    obj0 = nil; /** obj0对A的强引用失效 **/
+    /*
+     * 对象B的所有者不存在，废弃对象B。
+     *
+     */
+
+##### 2. __weak 修饰符
+__weak 修饰符可解决内存管理中必然发生的“循环引用”的问题。下面代码展示一个循环引用。
+
+	@interface Test : NSObject
+	{
+    	id obj_;
+	}
+	-(void)setObject:(id)obj;
+	@end
+
+	@implementation Test
+	- (id)init
+	{
+   		self = [super init];
+    	if (self) {
+        
+    }
+    	return self;
+	}
+	-(void) setObject:(id)obj{
+    	obj_ = obj;
+	}
+	@end
+	
+	{
+		id test0 = [[Test alloc] init]; /* 对象 A */
+    	id test1 =[[Test alloc] init]; /* 对象 B */
+    	/**
+    	 *  Test对象A的obj_成员变量持有Test对象B的强引用
+    	 *  此时持有对象B的强引用对象为 A 的obj_ 和 test1
+     	 */
+    	[test0 setObject:test1];
+   	   	/**
+     	 *  Test对象B的obj_成员变量持有Test对象A的强引用
+     	 *  此时持有对象A的强引用对象为 B 的obj_ 和 test0
+     	 */
+    	[test1 setObject:test0];
+	}
+	test0和test1超出作用域，强引用失效。此时持有Test对象A的强引用为Test对象B的obj_。持有	Test对象B的强引用为Test对象A的obj_。内存泄露
+	
+因为带__weak修饰符的变量（弱引用）不持有对象，所以在超出其变量作用域是，对象释放。那么此时引用__weak即可解决这个问题，
+
+	@interface Test : NSObject
+	{
+    	id __block obj_;
+	}
+	
+##### __unsafe_unretained 修饰符
+
+__unsafe_unretained修饰符正如其名 unsafe 所示，是不安全的所有权修饰符。尽管ARC式的内存管理是编译器的工作，但 __unsafe_unretained 修饰的变量不属于编译器的内存管理对象。
+
+__unsafe_unretained和__weak一样，自己生成并持有的对象不能被自己持有。
+
+	id __unsafe_unretained obj = [[NSObject alloc] init];
+这里会报错误提示“assigning retained obj to unsafe_unretained variable”。下面来看看 __unsafe_unretained 和 __weak 的差异
+
+	id __unsafe_unretained objA = nil;
+	{
+    id objB = [[NSObject alloc] init];
+    objA = objB;
+    NSLog(@"A : %@",objA);
+    }
+    NSLog(@"A2 : %@",objA);
+    
+输出你会发现两次输出内容一样。但是 objB 变量在超出其作用域，强引用失效，自动释放持有的对象。A2输出objA变量表示的对象已经被废弃（悬垂指针）！错误访问！ 也就是说最后一行输出正常运行只是碰巧而已。
+
+##### __autorelease 修饰符
