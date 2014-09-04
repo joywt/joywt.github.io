@@ -19,7 +19,7 @@ categories:
 对象操作与Objective-C 方法的对应表：
 
 对象操作			| Objective-C 方法
-:--------------	| :--------------
+--------------	| ---------------
 生成并持有对象	| alloc/new/copy/mutableCopy 等方法
 持有对象			| retain 方法
 释放对象			| release 方法
@@ -151,3 +151,78 @@ __unsafe_unretained和__weak一样，自己生成并持有的对象不能被自�
 输出你会发现两次输出内容一样。但是 objB 变量在超出其作用域，强引用失效，自动释放持有的对象。A2输出objA变量表示的对象已经被废弃（悬垂指针）！错误访问！ 也就是说最后一行输出正常运行只是碰巧而已。
 
 ##### __autorelease 修饰符
+ARC 中 autorelease 和 NSAutoreleasePool 也不能使用，但可以这样写：
+
+	@autoreleasepool {
+        id __autoreleasing obj = [[NSObject alloc] init];
+    }
+   
+ARC 下__autoreleasing来代替 autorelease方法，即对象被注册到 autoreleasepool。下面还有几种情况生成的对象会注册到 autoreleasepool。init 方法返回值的对象不注册到 autoreleasepool。
+
+@autoreleasepool下 __strong 类型非自己生成自己持有的对象
+
+	@autoreleasepool {
+        id  obj = [NSMutableArray array];
+    }
+
+对象作为函数返回值，因对象变量返回时超出其作用域，编译器会自动把对象注册到 autoreleasepool。
+
+	-(id)array{
+    return [[NSMutableArray alloc] init];
+	}
+	
+__weak 修饰符的变量持有的对象必定要注册到 autoreleasepool。
+
+#### ARC 规则
+* 不能使用 retain/release/retainCount/autorelease
+* 不能使用 NSAllocateObject/NSDeallocateObject
+* 须遵守内存管理的方法命名规则
+* 不要显示的调用dealloc
+* 使用 @autorelease 块替代 NSAutoreleasePool
+* 不能使用区域（NSZone）
+* 对象型变量不能作为C语言结构体（struct/union）的成员
+* 显示转换 “id” 和 “void”
+
+下面解释部分项
+
+ARC下遵守内存管理的方法命名规则中一个很严格的 “init”，以init开始的方法需返回一个对象。如下：
+
+	-(id)initWithObject:(id)obj;
+	
+对象型变量不能作为C语言结构体（struct/union）的成员，下面代码会引起编译错误。
+
+	struct Data{
+        NSMutableArray *array;
+    };
+错误描述：ARC forbids Objective-C objs in structs or unious
+
+##### 显示转换 “id” 和 “void”
+id 型或对象型变量赋值给 void * 或者逆向赋值时都需要进行特定的转换。如果只想单纯地赋值，则可以使用“__bridge转换”。
+
+	id obj = [[NSObject alloc] init];
+    void *p = (__bridge void *)obj;
+    id o = (__bridge id)p;
+   
+像这样，通过 “__bridge 转换”，id 和 void * 就能够互相转换。__bridge 转换中还有另外两种转换，分别是 “__bridge_retained 转换” 和 “__bridge_transfer 转换”
+
+	id obj = [[NSObject alloc] init];
+    void *p = (__bridge_retained void *)obj;
+    
+__bridge_retained 转换可使要转换赋值的变量也持有所赋值的对象。__bridge_retained 执行了 retain。__bridge_transfer 执行 __bridge_retained 相反的动作，__bridge_retained 转换与 retain 类似，那么 __bridge_transfer 转换与 release 类似。
+
+	id obj = [[NSObject alloc] init];
+    void *p = (__bridge_retained void *)obj;
+    (void)(__bridge_transfer id)p;
+    
+#### 属性
+ARC有效时，属性声明与所有权修饰符的对应关系
+
+属性声明的属性			| 所有权修饰符
+----------------------	| ----------------------
+assign					| __unsafe__unretained
+copy					| __strong
+retain					| __strong
+strong					| __strong
+unsafe_unretained		| __unsafe__unretained
+weak					| __weak
+
