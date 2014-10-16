@@ -13,7 +13,7 @@ iPhone的美好时光啊，只有一个设备，一个屏幕尺寸和一种分�
 
 历史证明美好的时光总是不能持久；苹果推出 iPad.构建布局开始变得笨拙。你有一个选择：创建两个NIBS - 一个 iPhone,一个 iPad。
 
- ![Smaller icon](ios8Image/01_01.png)
+ ![Smaller icon](http://api.photo.yunpan.360.cn/intf.php?method=Photo.getThumb&qid=375125087&nid=141347171349144041&size=1280_1280&devid=&rtick=1413471713&v=1.0.1&devtype=web&sign=4140a0af140e55906df1651d32b3dd6f&xid=266005)
  或者你也可以用代码判断，例如：
  
  	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) { 
