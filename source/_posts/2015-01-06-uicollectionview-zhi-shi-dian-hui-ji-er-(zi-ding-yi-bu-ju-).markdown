@@ -5,7 +5,7 @@ date: 2015-01-06 21:25:14 +0800
 comments: true
 categories: 
 ---
-### 知识点四（自定义布局 UIColectionViewLayout）
+### 知识点四（自定义布局 UICollectionViewLayout）
 
 在我们开始构建自定义布局前，先考虑一下是否必要这样做。`UICollectionViewFlowLayout` 类已经提供了一系列的显著特性，优化了效率，可以采用不同的方式实现不同类型的标准布局。只有在以下情况下才使用自定义布局：
  
