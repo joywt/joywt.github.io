@@ -3,7 +3,9 @@ layout: post
 title: "UICollectionView 知识点汇集二（自定义布局）"
 date: 2015-01-06 21:25:14 +0800
 comments: true
-categories: 
+categories: UICollectionView
+description: "UICollectionView 知识点汇集二（自定义布局）"
+keywords: UICollectionView,UICollectionViewLayout,CustomCollectionViewLayout
 ---
 ### 知识点四（自定义布局 UICollectionViewLayout）
 
