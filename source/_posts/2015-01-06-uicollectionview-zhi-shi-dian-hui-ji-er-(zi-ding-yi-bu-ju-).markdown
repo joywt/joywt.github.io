@@ -28,6 +28,7 @@ keywords: UICollectionView,UICollectionViewLayout,CustomCollectionViewLayout
 
 	调用`invalidateLayout`不会使布局立即响应，collection view 会检查当前布局是否是最新布局，如果不是则更新。也就是说多次调用`invalidateLayout`方法不会引起布局的重复更新。
 	
+<!-- More -->	
 `UICollectionViewLayoutAttributes` 类对象负责布局的属性，可以被缓存和引用。根据视图的类型选择正确的类方法`layoutAttributesForCellWithIndexPath:`,`layoutAttributesForSupplementaryViewOfKind:withIndexPath:` 和 `layoutAttributesForDecorationViewOfKind:withIndexPath:` 创建并返回属性对象。属性对象设置相关的属性来控制单元格和视图的可视性和外观，至少要设置视图在布局中的位置和尺寸。当布局有重叠的情况时，给 `zIndex` 分配值来确保重叠视图的顺序。如果标准属性类不符合我们的需要，我们可以子类话它并扩展它来储存每个视图的其他信息。当子类化布局属性时，它要求我们实现 `isEqual:` 方法来比较自定义属性，因为集合视图在一些操作中会使用该方法。
 
 	@interface MyCustomAttributes : UICollectionViewLayoutAttributes

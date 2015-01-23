@@ -3,7 +3,9 @@ layout: post
 title: "UICollectionView 知识点汇集一（基础部分）"
 date: 2014-12-31 17:38:53 +0800
 comments: true
-categories: 
+categories: UICollectionView
+description: "UICollectionView 知识点汇集一（基础部分）"
+keywords: UICollectionView,UICollectionViewLayout,CustomCollectionViewLayout
 ---
 
 ### Collection View 基础
