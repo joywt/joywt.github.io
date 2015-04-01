@@ -5,7 +5,7 @@
 url: http://joywt.github.io
 title: Learning And Coding
 subtitle: 这一段时光叫做“学习和编程”
-author: joywt
+author: wangtie
 simple_search: https://www.google.com/search
 description:
 
@@ -34,12 +34,13 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-markdown: rdiscount
-rdiscount:
-  extensions:
-    - autolink
-    - footnotes
-    - smart
+category_title_prefix: "分类：" #修改分类前缀
+markdown: kramdown
+# rdiscount:
+#   extensions:
+#     - autolink
+#     - footnotes
+#     - smart
 highlighter: pygments # default python pygments have been replaced by pygments.rb
 
 paginate: 10          # Posts per page on the blog index
