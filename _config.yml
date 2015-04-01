@@ -89,7 +89,7 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name: wangt
+disqus_short_name: lacing.me
 disqus_show_comment_count: true
 
 # Google Analytics
