@@ -20,7 +20,8 @@ subscribe_rss: /atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
 email:
-
+# Facebook 
+facebook_user: 100009171444590
 # ----------------------- #
 #    Jekyll & Plugins     #
 # ----------------------- #
@@ -87,8 +88,8 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
-disqus_show_comment_count: false
+disqus_short_name: wangt
+disqus_show_comment_count: true
 
 # Google Analytics
 google_analytics_tracking_id:
@@ -97,5 +98,5 @@ google_analytics_tracking_id:
 facebook_like: false
 
 # duoshuo comments
-duoshuo_comments: true
-duoshuo_short_name: joywt
+# duoshuo_comments: true
+# duoshuo_short_name: joywt

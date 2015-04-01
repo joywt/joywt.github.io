@@ -2,6 +2,7 @@
 layout: post
 title: "UICollectionView 知识点汇集二（自定义布局）"
 date: 2015-01-06 21:25:14 +0800
+author: wangtie
 comments: true
 categories: UICollectionView
 description: "UICollectionView 知识点汇集二（自定义布局）"
