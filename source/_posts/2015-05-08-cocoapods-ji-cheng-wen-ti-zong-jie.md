@@ -36,13 +36,13 @@ keywords: Undefined symbols for architecture,objc-class-ref,cocoaPods
 * 添加
 
   ```
-post_install do |installer_representation|
-    installer_representation.project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings['ARCHS'] = 'armv7 armv7s'
-        end
-    end
-end
+  post_install do |installer_representation|
+      installer_representation.project.targets.each do |target|
+          target.build_configurations.each do |config|
+              config.build_settings['ARCHS'] = 'armv7 armv7s'
+          end
+      end
+  end
   ```
 - 注意 **config.build_settings['ARCHS'] = 'armv7 armv7s'** 和项目的 **xxx -> TARGETS -> Build Settings 中的 Valid Architectures **的内容对应。
 
@@ -56,14 +56,14 @@ end
 * 在上面添加的内容中再加上 **config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'**
 
   ```
-post_install do |installer_representation|
-    installer_representation.project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings['ARCHS'] = 'armv7 armv7s'
-            config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
-        end
-    end
-end
+  post_install do |installer_representation|
+      installer_representation.project.targets.each do |target|
+          target.build_configurations.each do |config|
+              config.build_settings['ARCHS'] = 'armv7 armv7s'
+              config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+          end
+      end
+  end
   ```
 * 这是因为 64 位下项目中的 **Build Active Architecture Only** 默认是 NO，而 CocoaPods 中的是 YES。
 
