@@ -1,13 +1,11 @@
 ---
 layout: post
-title: "cocoaPods 集成问题总结"
+title: "CocoaPods 集成问题总结"
 date: 2015-05-08 09:39:00 +0800
 comments: true
 categories: cocoaPods
 keywords: Undefined symbols for architecture,objc-class-ref,cocoaPods
 ---
-集成 CocoaPods 引入第三库问题总结
-===
 由于项目的越来越庞大，团队成员的流动变化，如何让新同事快速的了解项目结构就变得非常必要了。为了解决这个问题，我们准备使用 cocoapods 来管理第三方库并用文档维护。这样就需要删除项目中的原来第三方库，然后通过 cocoapods 重新引入。
 问题一
 ---
@@ -37,7 +35,7 @@ keywords: Undefined symbols for architecture,objc-class-ref,cocoaPods
 * 编辑 **Podfile**
 * 添加
 
-	```
+  ```
 post_install do |installer_representation|
     installer_representation.project.targets.each do |target|
         target.build_configurations.each do |config|
@@ -45,7 +43,7 @@ post_install do |installer_representation|
         end
     end
 end
-	```
+  ```
 - 注意 **config.build_settings['ARCHS'] = 'armv7 armv7s'** 和项目的 **xxx -> TARGETS -> Build Settings 中的 Valid Architectures **的内容对应。
 
 问题三
@@ -57,7 +55,7 @@ end
 * 编辑 **Podfile**
 * 在上面添加的内容中再加上 **config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'**
 
-	```
+  ```
 post_install do |installer_representation|
     installer_representation.project.targets.each do |target|
         target.build_configurations.each do |config|
@@ -66,7 +64,7 @@ post_install do |installer_representation|
         end
     end
 end
-	```
+  ```
 * 这是因为 64 位下项目中的 **Build Active Architecture Only** 默认是 NO，而 CocoaPods 中的是 YES。
 
 问题四
